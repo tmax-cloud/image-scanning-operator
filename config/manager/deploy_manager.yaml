@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-scanning-operator
+spec:
+  selector:
+    matchLabels:
+      name: image-scanning-operator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: image-scanning-operator
+    spec:
+      serviceAccountName: image-scanning-sa
+      containers:
+      - command:
+        - /manager
+        args:
+        - --enable-leader-election
+        image: 192.168.6.122:5000/image-scanning-operator:0.0.1
+        imagePullPolicy: Always
+        name: manager
+        #resources:
+        #  limits:
+        #    cpu: 100m
+        #    memory: 30Mi
+        #  requests:
+        #    cpu: 100m
+        #    memory: 20Mi
+      terminationGracePeriodSeconds: 10

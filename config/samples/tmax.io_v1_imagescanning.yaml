@@ -1,0 +1,7 @@
+apiVersion: tmax.io/v1
+kind: ImageScanning
+metadata:
+  name: imagescanning-sample
+spec:
+  # Add fields here
+  foo: bar
