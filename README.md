@@ -22,14 +22,13 @@
 - make docker-push IMG={YOUR_REPOSITORY}/{IMAGE_NAME}:{TAG}
 - 예시: make docker-push IMG=192.168.6.122:5000/image-scanning-operator:0.0.1
 
-## Install Template Operator
+## Install Image-scanning Operator
 
 - [CRD](#crd)
 - [Namespace](#namespace)
 - [RBAC](#RBAC)
 - [Deployment](#deployment)
 - [Test](#test)
-- [Changes](#changes)
 
 ---
 
@@ -68,7 +67,7 @@
 
 ---
 
-#### CRD Detail
+## CRD Detail
 ```yaml
 apiVersion: tmax.io/v1
 kind: ImageScanning
