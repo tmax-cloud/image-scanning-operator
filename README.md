@@ -34,7 +34,7 @@
 
 #### crd
 > crd를 생성 합니다.
-- kubectl apply -f tmax.io_templates.yaml ([파일](./config/crd/bases/tmax.io_imagescannings.yaml))
+- kubectl apply -f tmax.io_imagescannings.yaml ([파일](./config/crd/bases/tmax.io_imagescannings.yaml))
 
 ---
 
