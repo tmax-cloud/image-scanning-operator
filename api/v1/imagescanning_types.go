@@ -58,6 +58,7 @@ type ImageScanningSpec struct {
 	SkipPing         bool          `json:"skipPing,omitempty"`
 	TimeOut          time.Duration `json:"timeOut,omitempty"`
 	FixableThreshold int           `json:"fixableThreshold,omitempty"`
+	Webhook          bool          `json:"webhook,omitempty"`
 }
 
 // ImageScanningStatus defines the observed state of ImageScanning

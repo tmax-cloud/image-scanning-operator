@@ -17,23 +17,28 @@ limitations under the License.
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
 	"strings"
 	"time"
+
+	tmaxiov1 "image-scanning-operator/api/v1"
 
 	"github.com/genuinetools/reg/clair"
 	reg "github.com/genuinetools/reg/clair"
 	"github.com/genuinetools/reg/registry"
 	"github.com/genuinetools/reg/repoutils"
 	"github.com/go-logr/logr"
+	isw "github.com/jitaeyun/image-scanning-webhook/pkg/schemas"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	tmaxiov1 "image-scanning-operator/api/v1"
 )
 
 // ImageScanningReconciler reconciles a ImageScanning object
@@ -88,6 +93,34 @@ func (r *ImageScanningReconciler) updateScanningStatus(instance *tmaxiov1.ImageS
 		cond.Message = err.Error()
 		cond.Reason = "error occurs while analyze vulnerability"
 		cond.Status = "Error"
+	}
+
+	//send webhook
+	webhookUrl := os.Getenv("WEBHOOK_URL")
+	if err == nil && len(webhookUrl) != 0 && instance.Spec.Webhook {
+		var data map[string]interface{}
+		in, _ := json.Marshal(cond)
+		json.Unmarshal(in, &data)
+		req := isw.ScanningRequest{
+			Index:      "image-scanning-" + instance.Namespace,
+			DocumentID: instance.Name,
+			Body:       data,
+		}
+		d, err := json.Marshal(req)
+		if err != nil {
+			reqLogger.Error(err, "change body data")
+		}
+		body := bytes.NewReader(d)
+		res, err := http.Post(webhookUrl+"/webhook/clair", "application/json", body)
+		bodyBytes, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			reqLogger.Error(err, "cannot find body")
+		}
+		reqLogger.Info("webhook: " + string(bodyBytes))
+		if err != nil {
+			reqLogger.Error(err, "cannot send webhook server")
+		}
+		defer res.Body.Close()
 	}
 
 	// set status
