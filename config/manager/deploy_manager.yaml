@@ -18,10 +18,12 @@ spec:
         - /manager
         args:
         - --enable-leader-election
-        image: 192.168.6.122:5000/image-scanning-operator:0.0.1
+        image: jitaeyun/image-scanning-operator:0.0.1
         imagePullPolicy: Always
         name: manager
         env:
+        - name: CLAIR_URL
+          value: "http://{CLAIR_URL}"
         - name: WEBHOOK_URL
           value: "http://{WEBHOOK_URL}"
         #resources:

@@ -103,24 +103,22 @@ func (r *ImageScanningReconciler) updateScanningStatus(instance *tmaxiov1.ImageS
 		json.Unmarshal(in, &data)
 		req := isw.ScanningRequest{
 			Index:      "image-scanning-" + instance.Namespace,
-			DocumentID: instance.Name,
+			DocumentID: instance.Spec.ImageUrl,
 			Body:       data,
 		}
-		d, err := json.Marshal(req)
-		if err != nil {
-			reqLogger.Error(err, "change body data")
+		if d, err := json.Marshal(req); err != nil {
+			reqLogger.Error(err, "fail marshal request")
+		} else {
+			res, err := http.Post(webhookUrl+"/webhook/clair", "application/json", bytes.NewReader(d))
+			if err != nil {
+				reqLogger.Error(err, "cannot send webhook server")
+			} else {
+				bodyBytes, _ := ioutil.ReadAll(res.Body)
+				reqLogger.Info("webhook: " + string(bodyBytes))
+				defer res.Body.Close()
+			}
 		}
-		body := bytes.NewReader(d)
-		res, err := http.Post(webhookUrl+"/webhook/clair", "application/json", body)
-		bodyBytes, err := ioutil.ReadAll(res.Body)
-		if err != nil {
-			reqLogger.Error(err, "cannot find body")
-		}
-		reqLogger.Info("webhook: " + string(bodyBytes))
-		if err != nil {
-			reqLogger.Error(err, "cannot send webhook server")
-		}
-		defer res.Body.Close()
+
 	}
 
 	// set status
@@ -209,8 +207,10 @@ func GetVulnerability(instance *tmaxiov1.ImageScanning) (reg.VulnerabilityReport
 	InitParameter(instance)
 	report := reg.VulnerabilityReport{}
 
-	if len(instance.Spec.ClairServer) < 1 {
-		return report, errors.NewBadRequest("clair url cannot be empty")
+	//get clair url
+	clairServer := os.Getenv("CLAIR_URL")
+	if len(clairServer) == 0 {
+		return report, errors.NewBadRequest("cannot find clairUrl")
 	}
 
 	if instance.Spec.FixableThreshold < 0 {
@@ -228,7 +228,7 @@ func GetVulnerability(instance *tmaxiov1.ImageScanning) (reg.VulnerabilityReport
 	}
 
 	// Initialize clair client.
-	cr, err := clair.New(instance.Spec.ClairServer, clair.Opt{
+	cr, err := clair.New(clairServer, clair.Opt{
 		Debug:    instance.Spec.Debug,
 		Timeout:  instance.Spec.TimeOut,
 		Insecure: instance.Spec.Insecure,
@@ -238,11 +238,9 @@ func GetVulnerability(instance *tmaxiov1.ImageScanning) (reg.VulnerabilityReport
 	}
 
 	// Get the vulnerability report.
-	report, err = cr.VulnerabilitiesV3(context.TODO(), r, image.Path, image.Reference())
-	if err != nil {
+	if report, err = cr.VulnerabilitiesV3(context.TODO(), r, image.Path, image.Reference()); err != nil {
 		// Fallback to Clair v2 API.
-		report, err = cr.Vulnerabilities(context.TODO(), r, image.Path, image.Reference())
-		if err != nil {
+		if report, err = cr.Vulnerabilities(context.TODO(), r, image.Path, image.Reference()); err != nil {
 			return report, err
 		}
 	}
