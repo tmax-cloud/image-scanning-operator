@@ -38,8 +38,6 @@ spec:
           properties:
             authUrl:
               type: string
-            clairServer:
-              type: string
             debug:
               type: boolean
             fixableThreshold:
@@ -65,7 +63,6 @@ spec:
             webhook:
               type: boolean
           required:
-          - clairServer
           - imageUrl
           type: object
         status:

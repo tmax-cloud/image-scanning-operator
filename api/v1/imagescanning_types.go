@@ -47,7 +47,6 @@ type Vulnerabilities []Vulnerability
 
 // ImageScanningSpec defines the desired state of ImageScanning
 type ImageScanningSpec struct {
-	ClairServer      string        `json:"clairServer"`
 	ImageUrl         string        `json:"imageUrl"`
 	AuthUrl          string        `json:"authUrl,omitempty"`
 	Insecure         bool          `json:"insecure,omitempty"`
