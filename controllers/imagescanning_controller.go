@@ -58,6 +58,7 @@ func (r *ImageScanningReconciler) Reconcile(req ctrl.Request) (ctrl.Result, erro
 	// your logic here
 	instance := &tmaxiov1.ImageScanning{}
 	err := r.Client.Get(context.TODO(), req.NamespacedName, instance)
+
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
@@ -103,7 +104,7 @@ func (r *ImageScanningReconciler) updateScanningStatus(instance *tmaxiov1.ImageS
 		json.Unmarshal(in, &data)
 		req := isw.ScanningRequest{
 			Index:      "image-scanning-" + instance.Namespace,
-			DocumentID: instance.Spec.ImageUrl,
+			DocumentID: instance.Name,
 			Body:       data,
 		}
 		if d, err := json.Marshal(req); err != nil {
