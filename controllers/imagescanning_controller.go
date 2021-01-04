@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	tmaxiov1 "image-scanning-operator/api/v1"
+	tmaxiov1 "github.com/tmax-cloud/image-scanning-operator/api/v1"
 
 	"github.com/genuinetools/reg/clair"
 	reg "github.com/genuinetools/reg/clair"

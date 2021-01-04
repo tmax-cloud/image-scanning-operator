@@ -27,8 +27,9 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	tmaxiov1 "image-scanning-operator/api/v1"
-	"image-scanning-operator/controllers"
+	"github.com/tmax-cloud/image-scanning-operator/controllers"
+
+	tmaxiov1 "github.com/tmax-cloud/image-scanning-operator/api/v1"
 	// +kubebuilder:scaffold:imports
 )
 
