@@ -1,4 +1,4 @@
-module image-scanning-operator
+module github.com/tmax-cloud/image-scanning-operator
 
 go 1.13
 
