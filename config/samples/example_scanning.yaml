@@ -3,7 +3,6 @@ kind: ImageScanning
 metadata:
   name: image-scanning-example
 spec:
-  clairServer: "{SERVER_ADDRESS}"
   imageUrl: "{IMAGE_URL}"
   forceNonSSL: true
   insecure: true
