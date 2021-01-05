@@ -5,6 +5,7 @@
 ## prerequisite Install
 - kubernetes
 - clair
+- image-scanning-webhook (optional)
 
 ## Build
 - [Image-build](#image-build)
@@ -41,6 +42,7 @@
 #### Namespace
 > 오퍼레이터를 위한 네임스페이스를 생성 합니다.
 - kubectl create namespace {YOUR_NAMESPACE}
+- ex) kubectl create namespace image-scanning
 
 ---
 
@@ -55,7 +57,9 @@
 
 #### Deployment
 > Image-scanning Operator를 생성 합니다.
->> 단, deploy_manager 내부의 image 경로는 사용자 환경에 맞게 수정 해야 합니다.
+>> deploy_manager 내부의 image 경로는 사용자 환경에 맞게 수정 해야 합니다.
+>> deploy_manager 내부 env인 CLAIR_URL, WEBHOOK_URL은 사용자 환경에 맞게 설정 해야 합니다.
+>> WEBHOOK_URL을 사용하지 않을경우에는 WEBHOOK_URL은 설정할 필요는 없습니다.
 - kubectl apply -f deploy_manager.yaml -n {YOUR_NAMESPACE} ([파일](./config/manager/deploy_manager.yaml))
 
 ---
@@ -74,7 +78,6 @@ kind: ImageScanning
 metadata:
     name: image-scanning-example
 spec:
-    clairServer: "{SERVER_ADDRESS}" #clairserver address (required)
     imageUrl: "{IMAGE_URL}" #image path (required)
     forceNonSSL: false #force allow use of non-ssl (default: false)
     insecure: false #do not verify tls certificates (default: false)
@@ -84,4 +87,5 @@ spec:
     password: string #password for the registry (default: <none>)
     skipPing: false #skip pinging the registry while establishing connection (default: false)
     timeOut: 0 #timeout for HTTP requests (default: 1m0s)
+    webhook: true # send vurnerability report to webhook-server (default: false)
 ```

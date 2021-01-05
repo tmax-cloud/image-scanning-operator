@@ -7,3 +7,4 @@ spec:
   imageUrl: "{IMAGE_URL}"
   forceNonSSL: true
   insecure: true
+  webhook: true
