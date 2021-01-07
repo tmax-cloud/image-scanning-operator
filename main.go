@@ -68,12 +68,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.ImageScanningReconciler{
+	if err = (&controllers.ImageScanRequestReconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("ImageScanning"),
+		Log:    ctrl.Log.WithName("controllers").WithName("ImageScanRequest"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "ImageScanning")
+		setupLog.Error(err, "unable to create controller", "controller", "ImageScanRequest")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

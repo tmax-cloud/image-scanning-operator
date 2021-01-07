@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
-kind: ImageScanning
+kind: ImageScanRequest
 metadata:
-  name: image-scanning-example
+  name: image-scan-example
 spec:
   imageUrl: "{IMAGE_URL}"
   forceNonSSL: true

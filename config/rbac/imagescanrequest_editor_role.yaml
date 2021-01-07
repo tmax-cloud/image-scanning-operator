@@ -1,20 +1,24 @@
-# permissions for end users to view imagescannings.
+# permissions for end users to edit imagescanrequests.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: imagescanning-viewer-role
+  name: imagescanrequest-editor-role
 rules:
 - apiGroups:
   - tmax.io
   resources:
-  - imagescannings
+  - imagescanrequests
   verbs:
+  - create
+  - delete
   - get
   - list
+  - patch
+  - update
   - watch
 - apiGroups:
   - tmax.io
   resources:
-  - imagescannings/status
+  - imagescanrequests/status
   verbs:
   - get

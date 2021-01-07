@@ -23,15 +23,12 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
-type ScanningStatusType string
+type ScanRequestStatusType string
 
 const (
-	ScanningSuccess ScanningStatusType = "Success"
-	ScanningError   ScanningStatusType = "Error"
+	ScanRequestSuccess ScanRequestStatusType = "Success"
+	ScanRequestError   ScanRequestStatusType = "Error"
 )
-
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 type Vulnerability struct {
 	Name          string               `json:"Name,omitempty"`
@@ -45,8 +42,11 @@ type Vulnerability struct {
 
 type Vulnerabilities []Vulnerability
 
-// ImageScanningSpec defines the desired state of ImageScanning
-type ImageScanningSpec struct {
+// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
+// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+
+// ImageScanRequestSpec defines the desired state of ImageScanRequest
+type ImageScanRequestSpec struct {
 	ImageUrl         string        `json:"imageUrl"`
 	AuthUrl          string        `json:"authUrl,omitempty"`
 	Insecure         bool          `json:"insecure,omitempty"`
@@ -60,11 +60,11 @@ type ImageScanningSpec struct {
 	Webhook          bool          `json:"webhook,omitempty"`
 }
 
-// ImageScanningStatus defines the observed state of ImageScanning
-type ImageScanningStatus struct {
+// ImageScanRequestStatus defines the observed state of ImageScanRequest
+type ImageScanRequestStatus struct {
 	Message         string                     `json:"message,omitempty"`
 	Reason          string                     `json:"reason,omitempty"`
-	Status          ScanningStatusType         `json:"status,omitempty"`
+	Status          ScanRequestStatusType      `json:"status,omitempty"`
 	Summary         map[string]int             `json:"summary,omitempty"`
 	Fatal           []string                   `json:"fatal,omitempty"`
 	Vulnerabilities map[string]Vulnerabilities `json:"vulnerabilities,omitempty"`
@@ -72,25 +72,26 @@ type ImageScanningStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="STATUS",type=string,JSONPath=`.status.status`
 
-// ImageScanning is the Schema for the imagescannings API
-type ImageScanning struct {
+// ImageScanRequest is the Schema for the imagescanrequests API
+type ImageScanRequest struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ImageScanningSpec   `json:"spec,omitempty"`
-	Status ImageScanningStatus `json:"status,omitempty"`
+	Spec   ImageScanRequestSpec   `json:"spec,omitempty"`
+	Status ImageScanRequestStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 
-// ImageScanningList contains a list of ImageScanning
-type ImageScanningList struct {
+// ImageScanRequestList contains a list of ImageScanRequest
+type ImageScanRequestList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []ImageScanning `json:"items"`
+	Items           []ImageScanRequest `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&ImageScanning{}, &ImageScanningList{})
+	SchemeBuilder.Register(&ImageScanRequest{}, &ImageScanRequestList{})
 }

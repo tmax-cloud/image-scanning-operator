@@ -39,7 +39,7 @@ rules:
 - apiGroups:
   - tmax.io
   resources:
-  - imagescannings
+  - imagescanrequests
   verbs:
   - create
   - delete
@@ -51,7 +51,7 @@ rules:
 - apiGroups:
   - tmax.io
   resources:
-  - imagescannings/status
+  - imagescanrequests/status
   verbs:
   - get
   - patch

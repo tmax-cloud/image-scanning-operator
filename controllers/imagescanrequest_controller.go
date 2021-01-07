@@ -27,8 +27,6 @@ import (
 	"strings"
 	"time"
 
-	tmaxiov1 "github.com/tmax-cloud/image-scanning-operator/api/v1"
-
 	"github.com/genuinetools/reg/clair"
 	reg "github.com/genuinetools/reg/clair"
 	"github.com/genuinetools/reg/registry"
@@ -39,24 +37,26 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	tmaxiov1 "github.com/tmax-cloud/image-scanning-operator/api/v1"
 )
 
-// ImageScanningReconciler reconciles a ImageScanning object
-type ImageScanningReconciler struct {
+// ImageScanRequestReconciler reconciles a ImageScanRequest object
+type ImageScanRequestReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=tmax.io,resources=imagescannings,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=tmax.io,resources=imagescannings/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=tmax.io,resources=imagescanrequests,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=tmax.io,resources=imagescanrequests/status,verbs=get;update;patch
 
-func (r *ImageScanningReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *ImageScanRequestReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	reqLogger := r.Log.WithValues("Request.Namespace", req.Namespace, "Request.Name", req.Name)
 	reqLogger.Info("Reconciling Scanning")
 
 	// your logic here
-	instance := &tmaxiov1.ImageScanning{}
+	instance := &tmaxiov1.ImageScanRequest{}
 	err := r.Client.Get(context.TODO(), req.NamespacedName, instance)
 
 	if err != nil {
@@ -80,12 +80,12 @@ func (r *ImageScanningReconciler) Reconcile(req ctrl.Request) (ctrl.Result, erro
 	return r.updateScanningStatus(instance, &report, err)
 }
 
-func (r *ImageScanningReconciler) updateScanningStatus(instance *tmaxiov1.ImageScanning, report *reg.VulnerabilityReport, err error) (ctrl.Result, error) {
+func (r *ImageScanRequestReconciler) updateScanningStatus(instance *tmaxiov1.ImageScanRequest, report *reg.VulnerabilityReport, err error) (ctrl.Result, error) {
 	reqLogger := r.Log.WithName("update Scanning status")
 	// set condition depending on the error
 	instanceWithStatus := instance.DeepCopy()
 
-	var cond tmaxiov1.ImageScanningStatus
+	var cond tmaxiov1.ImageScanRequestStatus
 	if err == nil {
 		cond.Message = "succeed to get vulnerability"
 		cond.Status = "Success"
@@ -197,13 +197,13 @@ func ParseAnalysis(threshold int, report *reg.VulnerabilityReport) (map[string]i
 	return summary, fatal, vulnerabilities
 }
 
-func InitParameter(instance *tmaxiov1.ImageScanning) {
+func InitParameter(instance *tmaxiov1.ImageScanRequest) {
 	if instance.Spec.TimeOut == 0 {
 		instance.Spec.TimeOut = time.Minute
 	}
 }
 
-func GetVulnerability(instance *tmaxiov1.ImageScanning) (reg.VulnerabilityReport, error) {
+func GetVulnerability(instance *tmaxiov1.ImageScanRequest) (reg.VulnerabilityReport, error) {
 
 	InitParameter(instance)
 	report := reg.VulnerabilityReport{}
@@ -249,7 +249,7 @@ func GetVulnerability(instance *tmaxiov1.ImageScanning) (reg.VulnerabilityReport
 	return report, err
 }
 
-func createRegistryClient(instance *tmaxiov1.ImageScanning, domain string) (*registry.Registry, error) {
+func createRegistryClient(instance *tmaxiov1.ImageScanRequest, domain string) (*registry.Registry, error) {
 	// Use the auth-url domain if provided.
 	authDomain := instance.Spec.AuthUrl
 	if authDomain == "" {
@@ -276,8 +276,8 @@ func createRegistryClient(instance *tmaxiov1.ImageScanning, domain string) (*reg
 	})
 }
 
-func (r *ImageScanningReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *ImageScanRequestReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&tmaxiov1.ImageScanning{}).
+		For(&tmaxiov1.ImageScanRequest{}).
 		Complete(r)
 }
