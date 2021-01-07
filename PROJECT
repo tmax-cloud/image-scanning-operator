@@ -3,7 +3,7 @@ projectName: github.com/tmax-cloud/image-scanning-operator
 repo: image-scanning-operator
 resources:
 - group: tmax.io
-  kind: ImageScanning
+  kind: ImageScanRequest
   version: v1
 version: 3-alpha
 plugins:
