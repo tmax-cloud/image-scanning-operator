@@ -30,7 +30,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	tmaxiov1 "image-scanning-operator/api/v1"
+	tmaxiov1 "github.com/tmax-cloud/image-scanning-operator/api/v1"
 	// +kubebuilder:scaffold:imports
 )
 

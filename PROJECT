@@ -1,6 +1,6 @@
 layout: go.kubebuilder.io/v2
 projectName: github.com/tmax-cloud/image-scanning-operator
-repo: image-scanning-operator
+repo: github.com/tmax-cloud/image-scanning-operator
 resources:
 - group: tmax.io
   kind: ImageScanRequest
